@@ -133,6 +133,7 @@ def main():
     bg_img = pg.image.load("ex03/fig/pg_bg.jpg")
 
     bird = Bird(3, (900, 400))
+    bombs = [Bomb() for i in range()]
     bomb = Bomb((255, 0, 0), 10)
     beam = None
 
@@ -147,18 +148,27 @@ def main():
         tmr += 1
         screen.blit(bg_img, [0, 0])
         
-        if bird._rct.colliderect(bomb._rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+        for bomb in bombs:
+            bomb.update(screen)
+            if bird._rct.colliderect(bomb._rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
+
         bomb.update(screen)
         if beam is not None:
             beam.update(screen)
+            for i, bomb in enumerate(bombs):
+                if beam._rct.colliderect(bomb._rct):
+                    beam = None
+                    del bombs[i]
+                    bird.change_img(6, screen)
+
         pg.display.update()
         clock.tick(1000)
 
