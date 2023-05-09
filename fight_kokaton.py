@@ -8,6 +8,7 @@ import pygame as pg
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
 NUM_OF_BOMBS = 5  # 爆弾の数
+COUNT_OF_BOMBS = 0 # 爆弾を撃ち落とした数
 
 
 def check_bound(area: pg.Rect, obj: pg.Rect) -> tuple[bool, bool]:
@@ -143,8 +144,17 @@ class Beam:
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
 
+# class Point:
+#     def __init__(self):
+#         self.fonto  = pg.font.Font(None, 150)
+
+#     def update(self, screen: pg.Surface):
+#         self.txt = self.fonto.render(str(COUNT_OF_BOMBS), True, (0, 0, 0))
+#         screen.blit(self.txt, [300, 200])
+#         time.sleep(5)
 
 def main():
+    COUNT_OF_BOMBS = 0
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
@@ -172,7 +182,13 @@ def main():
                 # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
                 bird.change_img(8, screen)
                 pg.display.update()
-                time.sleep(1)
+                
+                fonto  = pg.font.Font(None, 500)
+                point_txt = fonto.render(str(COUNT_OF_BOMBS), True, (0, 0, 0))
+                screen.blit(point_txt, [500, 500])
+                print(COUNT_OF_BOMBS)
+
+                time.sleep(3)
                 return
             
         key_lst = pg.key.get_pressed()
@@ -184,12 +200,12 @@ def main():
                 if beam._rct.colliderect(bomb._rct):
                     beam = None
                     del bombs[i]
+                    COUNT_OF_BOMBS += 1
                     bird.change_img(6, screen)
                     break
 
         pg.display.update()
         clock.tick(1000)
-
 
 if __name__ == "__main__":
     pg.init()
