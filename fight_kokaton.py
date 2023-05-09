@@ -143,6 +143,19 @@ class Beam:
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
 
+class Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """
+    def __init__(self):
+        self._img = pg.image.load(f"ex03/fig/explosion.gif")
+        self._lst = [self._img, pg.transform.flip(self._img, True, False), pg.transform.flip(self._img, False, True)]
+        self._rct = self._img.get_rect()
+        self._rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+        self._life = 100
+
+    def update(self, screen: pg.Surface): 
+        screen.blit(self._img, self._rct)
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -152,6 +165,7 @@ def main():
 
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
+    explosion = [Explosion() for _ in range(NUM_OF_BOMBS)]
     beam = None
 
     tmr = 0
