@@ -107,24 +107,26 @@ class Bomb:
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
 
+
 class Beam:
     """
     ビームに関するクラス
     """
-    def __init__(self, bird:Bird):
+    def __init__(self, bird: Bird):
         self._img = pg.image.load(f"ex03/fig/beam.png") # 画像surface
-        self._rct = self._img.get_rect()
+        self._rct = self._img.get_rect()  # 画像surfaceに対応したrect
         self._rct.centerx = bird._rct.centerx + 100
         self._rct.centery = bird._rct.centery
         self._vx, self._vy = +1, 0
 
-    def update(self, screen:pg.Surface):
+    def update(self, screen: pg.Surface):
         """
         ビームを速度self._vyに基づき移動させる
-        引数screen: 画面surface
+        引数 screen：画面Surface
         """
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -147,18 +149,25 @@ def main():
         tmr += 1
         screen.blit(bg_img, [0, 0])
         
-        if bird._rct.colliderect(bomb._rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
-
+        if bomb is not None:  # 爆弾が存在しているとき
+            bomb.update(screen)
+            if bird._rct.colliderect(bomb._rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
+            
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        bomb.update(screen)
-        if beam is not None:
+
+        if beam is not None:  # ビームが存在しているとき
             beam.update(screen)
+            if bomb is not None and beam._rct.colliderect(bomb._rct):
+                beam = None
+                bomb = None
+                bird.change_img(6, screen)
+
         pg.display.update()
         clock.tick(1000)
 
